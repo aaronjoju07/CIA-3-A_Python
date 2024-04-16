@@ -48,3 +48,5 @@ st.header("Preprocessed Review Text")
 
 st.write(df['review_text_preprocessed'])
 
+st.header('Jaccard Similarity')
+#do df['review_text_preprocessed'] using jaccard similarity identidy the text similarity for General,GeneralPetite and Initmate from the "Division Name" Column
