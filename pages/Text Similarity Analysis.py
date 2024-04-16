@@ -19,8 +19,6 @@ df['Division Name']=df['Division Name'].fillna(df['Division Name'].mode()[0])
 
 df['Review Text']=df['Review Text'].fillna('.')
 
-
-
 def lowercase(text):
     text = text.lower()
     return(text)
