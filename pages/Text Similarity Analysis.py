@@ -1,35 +1,52 @@
 import pandas as pd
+import numpy as np
 import nltk
 import streamlit as st
-from nltk.tokenize import word_tokenize
+from nltk.tokenize import word_tokenize,sent_tokenize
 from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
-from nltk.stem import WordNetLemmatizer
-import matplotlib.pyplot as plt
 import re
 
-st.title('Womens Clothing E-Commerce Reviews - Text Analysis')
+
+
+st.title("Womens Clothing E-Commerce Reviews Similarity Analysis")
+
 df = pd.read_csv('WomensClothingE-CommerceReviews.csv')
 
+any_missing_in_columns = df.isnull().any()
 
-# def tokenize_text(text):
-#     tokens = word_tokenize(text.lower() if text.isalpha())
-#     tokens = [token for token in tokens if token.isalnum()]
-#     return tokens
-# def stem_tokens(tokens):
-#     stemmer = PorterStemmer()
-#     stemmed_tokens = [stemmer.stem(token) for token in tokens]
-#     return stemmed_tokens
-# def remove_stopwords(tokens):
-#     filtered_tokens = [token for token in tokens if token not in stopwords.words('english')]
-#     return filtered_tokens
 
-# def lemmatize_tokens(tokens):
-#     lemmatizer = WordNetLemmatizer()
-#     lemmatized_tokens = [lemmatizer.lemmatize(token) for token in tokens]
-#     # cleaned_tokens = [re.sub(r'[^a-zA-Z]', '', token) for token in lemmatized_tokens if token.isalpha()]
-#     return lemmatized_tokens
-# df['Review Text'] = df['Review Text'].apply(tokenize_text)
-# df['Review Text'] = df['Review Text'].apply(remove_stopwords)
-# df['Review Text'] = df['Review Text'].apply(stem_tokens)
-# df['Review Text']  = df['Review Text'].apply(lemmatize_tokens)
+df['Division Name']=df['Division Name'].fillna(df['Division Name'].mode()[0])
+
+df['Review Text']=df['Review Text'].fillna('.')
+
+
+
+def lowercase(text):
+    text = text.lower()
+    return(text)
+
+def punctuation(text):
+    text = re.sub(r'[^\w\s]', '', text)
+    return(text)
+
+    
+def tokenize(text):
+    tokens = word_tokenize(text)
+    return(tokens)
+    
+def stopword(tokens):
+    stop_words = set(stopwords.words('english'))
+    tokens = [word for word in tokens if word not in stop_words]
+    preprocessed_text = ' '.join(tokens)
+    # st.write(preprocessed_text)
+    return(preprocessed_text)
+
+df['lowercase']= df['Review Text'].apply(lowercase)
+df['punctuation'] = df['lowercase'].apply(punctuation)
+df['tokenized'] = df['punctuation'].apply(tokenize)
+df['review_text_preprocessed'] = df['tokenized'].apply(stopword)
+
+st.header("Preprocessed Review Text")
+
+st.write(df['review_text_preprocessed'])
+
